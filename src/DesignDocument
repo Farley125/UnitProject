@@ -1,0 +1,35 @@
+public (main)(String name, int crit rate, int health, int speed, int strength, int fortitude, int potion) {
+A constructor with name, stats, and the potion that they may or may not have.
+}
+
+public (main)(String name, int crit rate, int health, int speed, int strength, int fortitude) {
+Overloaded constructor without the potion (incase they want it disabled)
+}
+
+public String exchange() {
+Method that'll compare the two given moves and determine the outcome of them.
+}
+
+public void setHealth() {
+Method to set health of user.
+}
+
+public void consume() {
+method to consume potion and affect stat associated
+}
+
+public int damageDone() {
+will calculate the damage done taking into account victim's defense and attackers strength and crit rate.
+}
+
+public boolean gameOver() {
+will check health of users.
+}
+
+First it'll print instructions on how the game is played then require the user to input a name, an artifact of choice, a potion of choice, and distribute given attribute points.
+Then it'll store the health and other stats in an object.
+Under a for statement which'll continue until a user's health reaches 0 or below or until the set amount of rounds is exceeded.
+The users will be prompted to either input a (attack), d (defend), c (consume), or p (parry). If both users attack they will trade hits and both deal damage, if one user attacks and the second one defends
+the damage will be determined by the attacking players attack stat and the defending players fortitude. If one user attacks and the other parries, the attacking user will be stunned, but if the parrying user doesn't get
+attacked he will be stunned. There will also be a chance for every time a user attacks for it to be a crit and it'll do increased damage. If a user attacks more than a certain amount of times their attacks will weaken and
+their damage will be debuffed until they choose another move.
