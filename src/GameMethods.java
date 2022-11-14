@@ -9,10 +9,9 @@ public class GameMethods {
     private int fortitude;
     private int potion;
     private int attackCounter;
-    private int playerNumber;
     private int allocatableStat;
-private boolean havePotion;
-    public GameMethods (String name, String artifact, double critRate, int health, int speed, int strength, int fortitude, int potion, int playerNumber) {
+    private boolean isStun;
+    public GameMethods (String name, String artifact, double critRate, int health, int speed, int strength, int fortitude, int potion) {
         //A constructor with name, stats, and the potion that they may or may not have.
         this.userName = name;
         this.artifact = artifact;
@@ -22,14 +21,13 @@ private boolean havePotion;
         this.strength = strength;
         this.fortitude = fortitude;
         this.potion = potion;
-        this.playerNumber = playerNumber;
+        isStun = false;
         attackCounter = 0;
         allocatableStat = 5;
         evadeChance = .05;
-        havePotion = true;
     }
 
-    public GameMethods (String name, double critRate, int health, int speed, int strength, int fortitude, String artifact, int playerNumber) {
+    public GameMethods (String name, double critRate, int health, int speed, int strength, int fortitude, String artifact) {
        // Overloaded constructor without the potion (incase they want it disabled)
         userName = name;
         this.critRate = critRate;
@@ -38,64 +36,64 @@ private boolean havePotion;
         this.strength = strength;
         this.fortitude = fortitude;
         this.artifact = artifact;
+        isStun = false;
         attackCounter = 0;
         evadeChance = .05;
         allocatableStat = 5;
-        havePotion = false;
     }
 
     public GameMethods (){
     }
 
-    public String exchange(String user1, String user2) {
+    public int exchange(String attacker, int baseDamage, String victim) {
         //Method that'll compare the two given moves and determine the outcome of them.
-        if (user1.equals(user2))
-        {
-            if (user1.equals("a"))
-            {
-
+        if (attacker.equals("c")) {
+            if (potion > 0) {
+                consume();
+                System.out.println("You reach into your bag and pull out a potion! + 50 Health! \n [You have " + potion + " potion(s)]");
             }
-            else
-            {
-
+            else {
+                System.out.println("You reach into your bag and pull out nothing! [You have 0 potions]");
+                return 0;
             }
         }
-        else if (user1.equals("a") || user2.equals("a"))
-        {
-
+        if (attacker.equals("p") && victim.equals("a") == false) {
+            isStun = true;
+                System.out.println("You ready yourself for an attack that never came, your rhythm was broken! \n You've been stunned.");
+                return 0;
         }
-        return "my nuts";
+        if (attacker.equals("a") && victim.equals("d")){
+            return (int) (Math.ceil((double)baseDamage/5));
+        }
+        return 0;
     }
 
     public void setHealth(int newHealth) {
         //Method to set health of user.
         health = newHealth;
     }
+    public int getDamage(){
+        return strength * 5;
+    }
 
     public void consume() {
         //method to consume potion and affect stat associated
-        havePotion = false;
+        potion--;
         setHealth(health + 50);
-    }
-
-    public int damageDone(String attacker, String victim) {
-        //will calculate the damage done taking into account victim's defense and attackers strength and crit rate.
-        int damage = 30;
-        if (victim.equals("d"))
-        {
-            damage *= .5;
-        }
-        return damage;
     }
 
     public boolean gameOver() {
         //will check health of users.
-return true;
+        if (health <= 0)
+        {
+            return true;
+        }
+        else return false;
     }
 
     public void statAdjust() {
         if (artifact.equals("a")) {
-            strength++;
+            strength += 2;
         } else if (artifact.equals("d")) {
             critRate += .10;
         } else if (artifact.equals("w")) {
@@ -113,7 +111,7 @@ return true;
         this.speed += speed;
         evadeChance += (.5 * speed);
         this.fortitude += fortitude;
-        health += (20 * (this.fortitude-1));
+        health += (40 * this.fortitude);
     }
 
     public void infoPrint()
@@ -125,7 +123,6 @@ return true;
         System.out.println ("strength: " + strength);
         System.out.println ("fortitude: " + fortitude);
         System.out.println ("potions: " + potion);
-        System.out.println ("playerNumber: " + playerNumber);
         System.out.println ("");
     }
 }
