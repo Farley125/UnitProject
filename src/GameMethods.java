@@ -3,12 +3,15 @@ public class GameMethods {
     private String artifact;
     private double critRate;
     private double evadeChance;
+    private double evadeRoll;
+    private double critRoll;
     private int health;
     private int speed;
     private int strength;
     private int fortitude;
     private int potion;
     private int attackCounter;
+    private int damageDone;
     private int allocatableStat;
     private boolean isStun;
     public GameMethods (String name, String artifact, double critRate, int health, int speed, int strength, int fortitude, int potion) {
@@ -48,8 +51,17 @@ public class GameMethods {
     public int exchange(String attacker, String victim) {
         //Method that'll compare the two given moves and determine the outcome of them.
         int baseDamage = (strength * 5) + 10;
-        if (attacker.equals(""))
-        {
+        int damageMulti = 1;
+        critRoll = Math.random();
+        evadeRoll = Math.random();
+        if (evadeRoll < evadeChance) {
+            damageDone = 0;
+            return 0;
+        }
+        if (critRoll < critRate) {
+            damageMulti = 2;
+        }
+        if (attacker.equals("")) {
             return 0;
         }
         if (attacker.equals("a")) {
@@ -62,8 +74,7 @@ public class GameMethods {
         if (attacker.equals("c")) {
             if (potion > 0) {
                 consume();
-            }
-            else {
+            } else {
                 return 0;
             }
         }
@@ -78,50 +89,56 @@ public class GameMethods {
             return 0;
         }
         if (attacker.equals("a") && victim.equals("d")) {
-            double crit = Math.random();
-            if (crit < critRate) {
-                return (baseDamage / 3) * 2;
-            }
-            return baseDamage / 3;
+            damageDone = (baseDamage / 3) * damageMulti;
+            return (baseDamage / 3) * damageMulti;
         } else if (attacker.equals("d")) {
             return 0;
         }
-        return baseDamage;
+        damageDone = baseDamage * damageMulti;
+        return baseDamage * damageMulti;
     }
 
-    public void outcomeMessage(String attacker, String victim) {
+    public String outcomeMessage(String attacker, String victim) {
         int baseDamage = (strength*5) + 25;
+        if (evadeRoll < evadeChance && attacker.equals("a")) {
+            System.out.println(evadeRoll);
+            return ("Your opponent dodged your attack!");
+        }
         if (attacker.equals("c")) {
             if (potion > 0) {
-                System.out.println("You reach into your bag and pull out a potion! + 50 Health! \n[You have " + potion + " potion(s)]\n");
+                potion--;
+                return ("You reach into your bag and pull out a potion! + 50 Health! \n[You have " + potion + " potion(s)]\n");
             }
             else {
-                System.out.println("You reach into your bag and pull out nothing! [You have 0 potions]\n");
+                return ("You reach into your bag and pull out nothing! [You have 0 potions]\n");
             }
         }
         else if (attacker.equals("p") && victim.equals("a") == false) {
-            System.out.println("You ready yourself for an attack that never came, your posture was disrupted! \nYou've been stunned.\n");
+            return ("You ready yourself for an attack that never came, your posture was disrupted! \nYou've been stunned.\n");
         } else if (attacker.equals("p") && victim.equals("a")) {
-            System.out.println("You parried their blow!");
+            return ("You parried their blow!\n");
         }
         else if (attacker.equals("a") && victim.equals("d")){
-            double crit = Math.random();
-            if (crit < critRate)
+            if (critRoll < critRate)
             {
-               System.out.println("You strike a defending opponent, but it was a critical! (You deal " + (baseDamage/3)*2 + " damage)\n");
+               return("You strike a defending opponent, and it was a critical hit! (You deal " + damageDone + " damage)\n");
             }
-            else System.out.println("You strike a defending opponent. (You deal " + (baseDamage/3) + " damage)\n");
+            else return ("You strike a defending opponent. (You deal " + damageDone + " damage)\n");
         }
         else if (attacker.equals("a") && victim.equals("p")) {
-            System.out.println("Your blow was parried, you were thrown off balance. \nYou've been stunned.\n");
+            return ("Your blow was parried, you were thrown off balance. \nYou've been stunned.\n");
         }
         else if (attacker.equals("d")) {
-            System.out.println("You ready your shield.\n");
+            return ("You ready your shield.\n");
         } else if (attacker.equals(""))
         {
-            System.out.println("You're unable to move.\n");
+            return ("You're unable to move.\n");
         }
-        else System.out.println("You strike your opponent. (You deal " + (baseDamage) + " damage)\n");
+        else if (critRoll < critRate)
+        {
+            return("You strike your opponent, and it was a critical hit! (You deal " + damageDone + " damage)\n");
+        }
+        return ("You strike your opponent. (You deal " + damageDone + " damage)\n");
     }
 
     public void setHealth(int newHealth) {
@@ -131,10 +148,12 @@ public class GameMethods {
     public int getHealth(){
         return health;
     }
+    public String getUserName() {
+        return userName;
+    }
 
     public void consume() {
         //method to consume potion and affect stat associated
-        potion--;
         setHealth(health + 50);
     }
 
@@ -152,6 +171,14 @@ public class GameMethods {
             return true;
         }
         else return false;
+    }
+
+    public double returnEvadeChance() {
+        return speed * .05;
+    }
+
+    public void setEvadeChance(double evadeChance) {
+        this.evadeChance = evadeChance;
     }
 
     public void statAdjust() {
