@@ -217,10 +217,9 @@ public class GameMethods {
 
     public void infoPrint()
     {
-        System.out.println ("user: " + userName);
-        System.out.println ("health: " + health);
-        System.out.println ("potions: " + potion);
-        System.out.println ("attack counters: " + attackCounter);
+        System.out.print ("user: " + userName);
+        System.out.print (",    health: " + health);
+        System.out.println (",    attack counters: " + attackCounter);
         System.out.println ("");
     }
 }
